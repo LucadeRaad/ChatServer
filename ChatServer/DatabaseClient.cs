@@ -45,6 +45,11 @@ namespace ChatServer
             return await _client.UpdateItemAsync(updateItemRequest);
         }
 
+        public async Task<DeleteItemResponse> DeleteItemAsync(DeleteItemRequest request)
+        {
+            return await _client.DeleteItemAsync(request);
+        }
+
         public async Task<ScanResponse> ScanAllAsync(ScanRequest request)
         {
             return await _client.ScanAsync(request);

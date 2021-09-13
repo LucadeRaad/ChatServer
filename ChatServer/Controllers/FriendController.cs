@@ -57,14 +57,43 @@ namespace FriendServer.Controllers
                 _myAppData.Friends[name] = new List<Friend>();
             }
 
-            if (_myAppData.Friends[name].Contains(friend))
+            foreach (var tempFriend in _myAppData.Friends[name])
             {
-                return;
+                if (tempFriend.Name == friend.Name)
+                {
+                    return;
+                }
             }
 
             _myAppData.Friends[name].Add(friend);
 
             await _friendRepository.SaveFriendAsync(name, _myAppData.Friends[name]);
+        }
+
+        [HttpDelete]
+        public void DeleteFriend(string name, string friend)
+        {
+            if (null == name)
+            {
+                return;
+            }
+
+            if (!_myAppData.Friends.ContainsKey(name))
+            {
+                return;
+            }
+
+            foreach (var tempFriend in _myAppData.Friends[name])
+            {
+                if (tempFriend.Name == friend)
+                {
+                    _myAppData.Friends[name].Remove(tempFriend);
+
+                    _friendRepository.DeleteFriend(name, tempFriend);
+
+                    break;
+                }
+            }
         }
     }
 }

@@ -139,5 +139,27 @@ namespace ChatServer
                 }
             }
         }
+
+        public async void DeleteFriend(string name, Friend friend)
+        {
+            var allFriends = await GetFriendsAsync(name);
+
+            if (allFriends.Contains(friend.Name))
+            {
+                allFriends.Remove(friend.Name);
+            }
+
+            var request = new PutItemRequest
+            {
+                TableName = TableName,
+                Item = new Dictionary<string, AttributeValue>
+                    {
+                        {"Person", new AttributeValue {S = name}},
+                        {"Friends", new AttributeValue {SS = allFriends}}
+                    }
+            };
+
+            await _client.PutItemAsync(request);
+        }
     }
 }

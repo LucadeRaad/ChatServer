@@ -15,5 +15,7 @@ namespace ChatServer
         Task<UpdateItemResponse> UpdateItemAsync(UpdateItemRequest updateItemRequest);
 
         Task<ScanResponse> ScanAllAsync(ScanRequest request);
+
+        Task<DeleteItemResponse> DeleteItemAsync(DeleteItemRequest request);
     }
 }
