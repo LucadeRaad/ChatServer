@@ -1,6 +1,7 @@
 ﻿using ChatServer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -36,6 +37,7 @@ namespace FriendServer.Controllers
 
             if (_myAppData.Friends.TryGetValue(name, out var output))
             {
+                Console.WriteLine("Got friendlist of " + name);
                 return output;
             }
             else
@@ -65,6 +67,8 @@ namespace FriendServer.Controllers
                 }
             }
 
+            Console.WriteLine("Added friend " + friend.Name + " to " + name);
+
             _myAppData.Friends[name].Add(friend);
 
             await _friendRepository.SaveFriendAsync(name, _myAppData.Friends[name]);
@@ -76,6 +80,11 @@ namespace FriendServer.Controllers
             if (null == name)
             {
                 return;
+            }
+
+            if (null == friend)
+            {
+                friend = "";
             }
 
             if (!_myAppData.Friends.ContainsKey(name))

@@ -27,7 +27,7 @@ namespace ChatServer.Controllers
         }
 
         [HttpGet]
-        public List<Chat> Get(string author, string recipient)
+        public List<Chat> Get(string author, string recipient, Boolean isReading)
         {
             if (null == author || null == recipient)
             {
@@ -38,30 +38,31 @@ namespace ChatServer.Controllers
             {
                 if (authorMessages.ContainsKey(recipient))
                 {
-                    return _myAppData.Messages[author][recipient];
+                    Console.WriteLine("Got chats from " + author + " to " + recipient);
+
+                    if (isReading)
+                    {
+                        var readChats = _myAppData.Messages[author][recipient];
+
+                        foreach (var chat in readChats)
+                        {
+                            chat.Read = true;
+                        }
+                    }
+
+                    var output = new List<Chat>(_myAppData.Messages[author][recipient]);
+
+                    output.AddRange(_myAppData.Messages[recipient][author]);
+
+                    output.Sort((m1, m2) => m1.Date.CompareTo(m2.Date));
+
+                    return output;
                 }
             }
             else
             {
                 return null;
             }
-
-            //if (_myAppData.Messages == null)
-            //{
-            //    return null;
-            //}
-
-            //if (_myAppData.Messages.ContainsKey(chat.Author))
-            //{
-            //    if (_myAppData.Messages[chat.Author].ContainsKey(chat.Recipient))
-            //    {
-            //        List<Chat> output = _myAppData.Messages[chat.Author][chat.Recipient];
-
-            //        _myAppData.Messages[chat.Author][chat.Recipient] = new List<Chat>();
-
-            //        return output.ToArray();
-            //    }
-            //}
 
             return null;
         }
@@ -80,6 +81,8 @@ namespace ChatServer.Controllers
             {
                 _myAppData.Messages[chat.Author][chat.Recipient] = new List<Chat>();
             }
+
+            Console.WriteLine("Posted a chat from " + chat.Author + " to " + chat.Recipient);
 
             _myAppData.Messages[chat.Author][chat.Recipient].Add(chat);
 
