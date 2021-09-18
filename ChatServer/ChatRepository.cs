@@ -37,12 +37,7 @@ namespace ChatServer
                 {
                     new AttributeDefinition
                     {
-                        AttributeName = "Sender",
-                        AttributeType = "S"
-                    },
-                    new AttributeDefinition
-                    {
-                        AttributeName = "Recipient",
+                        AttributeName = "Id",
                         AttributeType = "S"
                     }
                 },
@@ -50,13 +45,8 @@ namespace ChatServer
                 {
                     new KeySchemaElement
                     {
-                        AttributeName = "Sender",
+                        AttributeName = "Id",
                         KeyType = "HASH"
-                    },
-                    new KeySchemaElement
-                    {
-                        AttributeName = "Recipient",
-                        KeyType = "RANGE"
                     }
                 },
                 ProvisionedThroughput = new ProvisionedThroughput
@@ -76,6 +66,7 @@ namespace ChatServer
                 TableName = TableName,
                 Item = new Dictionary<string, AttributeValue>
                 {
+                    {"Id", new AttributeValue {S = Guid.NewGuid().ToString()}},
                     {"Sender", new AttributeValue {S = chat.Author}},
                     {"Recipient", new AttributeValue {S = chat.Recipient}},
                     {"Text", new AttributeValue {S = chat.Message}},
@@ -100,6 +91,7 @@ namespace ChatServer
 
             foreach (var responseItem in response.Items)
             {
+                var id = responseItem["Id"].S;
                 var sender = responseItem["Sender"].S;
                 var recipient = responseItem["Recipient"].S;
                 var text = responseItem["Text"].S;
@@ -108,6 +100,8 @@ namespace ChatServer
 
                 var chat = new Chat()
                 {
+                    Id = Guid.Parse(id),
+
                     Date = DateTime.Parse(time),
 
                     Message = text,

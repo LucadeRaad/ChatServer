@@ -4,6 +4,7 @@ namespace ChatServer
 {
     public class Chat
     {
+        public Guid Id { get; set; }
         public DateTime Date { get; set; }
 
         public string Message { get; set; }

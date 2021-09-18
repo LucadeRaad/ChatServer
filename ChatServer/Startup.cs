@@ -61,7 +61,7 @@ namespace ChatServer
             friendRepository.ScanDynamoDBAsync();
             chatRepository.ScanDynamoDBAsync();
 
-            Console.WriteLine("Server up and running!");
+            Console.WriteLine("Server up and running!" + Guid.NewGuid());
         }
     }
 }
