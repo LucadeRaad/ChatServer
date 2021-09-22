@@ -14,13 +14,17 @@ namespace ChatServer
 
         private readonly MyAppData _myAppData;
 
+        private readonly OnlineManager _onlineManager;
+
         public FriendRepository(
             IDatabaseClient client,
-            MyAppData myAppData
+            MyAppData myAppData,
+            OnlineManager onlineManager
             )
         {
             _client = client;
             _myAppData = myAppData;
+            _onlineManager = onlineManager;
         }
 
         public async Task CreateTableAsync()

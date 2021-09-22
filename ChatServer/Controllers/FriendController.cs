@@ -17,14 +17,19 @@ namespace FriendServer.Controllers
 
         private FriendRepository _friendRepository;
 
+        private readonly OnlineManager _onlineManager;
+
         public FriendController(
             ILogger<FriendController> logger,
             MyAppData myAppData,
-            FriendRepository friendRepository)
+            FriendRepository friendRepository,
+            OnlineManager onlineManager
+            )
         {
             _logger = logger;
             _myAppData = myAppData;
             _friendRepository = friendRepository;
+            _onlineManager = onlineManager;
         }
 
         [HttpGet]
@@ -34,6 +39,8 @@ namespace FriendServer.Controllers
             {
                 return null;
             }
+
+            _onlineManager.FriendIsActive(name);
 
             if (_myAppData.Friends.TryGetValue(name, out var output))
             {
@@ -58,6 +65,8 @@ namespace FriendServer.Controllers
             {
                 _myAppData.Friends[name] = new List<Friend>();
             }
+
+            _onlineManager.FriendIsActive(name);
 
             foreach (var tempFriend in _myAppData.Friends[name])
             {
@@ -91,6 +100,8 @@ namespace FriendServer.Controllers
             {
                 return;
             }
+
+            _onlineManager.DeleteFriend(friend);
 
             foreach (var tempFriend in _myAppData.Friends[name])
             {

@@ -28,6 +28,7 @@ namespace ChatServer
             services.AddSingleton<MyAppData>();
             services.AddSingleton<ChatRepository>();
             services.AddSingleton<FriendRepository>();
+            services.AddSingleton<OnlineManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

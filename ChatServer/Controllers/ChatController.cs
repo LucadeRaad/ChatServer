@@ -16,23 +16,30 @@ namespace ChatServer.Controllers
 
         private ChatRepository _chatRepository;
 
+        private readonly OnlineManager _onlineManager;
+
         public ChatController(
             ILogger<ChatController> logger,
             MyAppData myAppData,
-            ChatRepository chatRepository)
+            ChatRepository chatRepository,
+            OnlineManager onlineManager
+            )
         {
             _logger = logger;
             _myAppData = myAppData;
             _chatRepository = chatRepository;
+            _onlineManager = onlineManager;
         }
 
         [HttpGet]
-        public List<Chat> Get(string author, string recipient, Boolean isReading)
+        public List<Chat> Get(string author, string recipient)
         {
             if (null == author || null == recipient)
             {
                 return null;
             }
+
+            _onlineManager.FriendIsActive(author);
 
             if (_myAppData.Messages.TryGetValue(author, out var authorMessages))
             {
@@ -40,17 +47,14 @@ namespace ChatServer.Controllers
                 {
                     Console.WriteLine("Got chats from " + author + " to " + recipient);
 
-                    if (isReading)
-                    {
-                        var readChats = _myAppData.Messages[author][recipient];
+                    var readChats = _myAppData.Messages[author][recipient];
 
-                        foreach (var chat in readChats)
-                        {
-                            chat.Read = true;
-                        }
+                    foreach (var chat in readChats)
+                    {
+                        chat.Read = true;
                     }
 
-                    var output = new List<Chat>(_myAppData.Messages[author][recipient]);
+                    var output = new List<Chat>(readChats);
 
                     output.AddRange(_myAppData.Messages[recipient][author]);
 
@@ -81,6 +85,8 @@ namespace ChatServer.Controllers
             {
                 _myAppData.Messages[chat.Author][chat.Recipient] = new List<Chat>();
             }
+
+            _onlineManager.FriendIsActive(chat.Author);
 
             Console.WriteLine("Posted a chat from " + chat.Author + " to " + chat.Recipient);
 
